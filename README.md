@@ -7,11 +7,9 @@ An example project showing how to use Courgette-JVM with Appium to test iOS nati
 * Java
 * MacOS
 * [Appium](https://appium.io/docs/en/about-appium/getting-started/?lang=en)
-* [XCode](https://developer.apple.com/xcode/) with iPhone 8 and iPhone 12 simulators
+* [XCode](https://developer.apple.com/xcode/) with iPhone 8 iPhone 12 and iPhone 13 simulators
 
 ## Test Execution
-
-There are 2 scenarios in this project and Courgette will run both scenarios in parallel across 2 different iOS simulators.
 
 https://user-images.githubusercontent.com/2563149/144464468-91b044bd-52ee-4cc3-abb8-0301762a9942.mp4
 

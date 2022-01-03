@@ -1,10 +1,12 @@
 package steps;
 
+import courgette.api.CourgetteMobileDeviceAllocator;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,20 +24,24 @@ import static java.lang.String.format;
 public class TestSteps {
     private IOSDriver<WebElement> driver;
     private AppiumDriverLocalService service;
+    private Scenario currentScenario;
 
     @Before
-    public void before() {
+    public void before(Scenario scenario) {
+        currentScenario = scenario;
         service = createAppiumDriverLocalService();
+        driver = createIOSDriver(service.getUrl());
     }
 
     @After
     public void after() {
         driver.terminateApp("io.appium.TestApp");
+        driver.quit();
     }
 
-    @Given("I have a {} device")
-    public void iHaveAIDevice(String deviceName) {
-        driver = createIOSDriver(service.getUrl(), deviceName, getWdaDevicePort(deviceName));
+    @Given("I launch the app")
+    public void iLaunchApp() {
+        driver.launchApp();
     }
 
     @When("I show the alert")
@@ -54,15 +60,20 @@ public class TestSteps {
         driver.findElementByName(("OK")).click();
     }
 
-    private IOSDriver<WebElement> createIOSDriver(final URL serverURL, final String deviceName, final int wdaLocalPort) {
+    private IOSDriver<WebElement> createIOSDriver(final URL serverURL) {
         File app = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("apps/TestApp.app.zip")).getFile());
+
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("deviceName", deviceName);
-        capabilities.setCapability("platformName", "iOS");
         capabilities.setCapability("app", app.getAbsolutePath());
+        capabilities.setCapability("deviceName", CourgetteMobileDeviceAllocator.DEVICE_NAME);
+        capabilities.setCapability("udid", CourgetteMobileDeviceAllocator.UDID);
+        capabilities.setCapability("wdaLocalPort", CourgetteMobileDeviceAllocator.PARALLEL_PORT);
+        capabilities.setCapability("platformName", "iOS");
         capabilities.setCapability("automationName", "XCUITest");
         capabilities.setCapability("noReset", true);
-        capabilities.setCapability("wdaLocalPort", wdaLocalPort);
+
+        currentScenario.log(format("iOS Device: %s", capabilities.getCapability("deviceName")));
+
         return new IOSDriver<>(serverURL, capabilities);
     }
 
@@ -72,15 +83,5 @@ public class TestSteps {
         service = serviceBuilder.build();
         service.start();
         return service;
-    }
-
-    private int getWdaDevicePort(final String deviceName) {
-        switch (deviceName) {
-            case "iPhone 8":
-                return 8100;
-            case "iPhone 12":
-                return 8101;
-        }
-        return 8102;
     }
 }
