@@ -3,6 +3,7 @@ package runners;
 import courgette.api.CourgetteOptions;
 import courgette.api.CourgettePlugin;
 import courgette.api.CourgetteRunLevel;
+import courgette.api.CourgetteTestOutput;
 import courgette.api.CucumberOptions;
 import courgette.api.junit.Courgette;
 import org.junit.runner.RunWith;
@@ -12,7 +13,7 @@ import org.junit.runner.RunWith;
         threads = 3,
         runLevel = CourgetteRunLevel.SCENARIO,
         reportTargetDir = "build",
-        showTestOutput = true,
+        testOutput = CourgetteTestOutput.CONSOLE,
         environmentInfo = "app=iOS test application; project_info=Courgette-JVM is awesome!",
         plugin = {CourgettePlugin.MOBILE_DEVICE_ALLOCATOR},
         mobileDevice = {
