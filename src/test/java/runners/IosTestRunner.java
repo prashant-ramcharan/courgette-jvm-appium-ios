@@ -5,6 +5,7 @@ import courgette.api.CourgettePlugin;
 import courgette.api.CourgetteRunLevel;
 import courgette.api.CourgetteTestOutput;
 import courgette.api.CucumberOptions;
+import courgette.api.MobileDeviceType;
 import courgette.api.junit.Courgette;
 import org.junit.runner.RunWith;
 
@@ -16,10 +17,11 @@ import org.junit.runner.RunWith;
         testOutput = CourgetteTestOutput.CONSOLE,
         environmentInfo = "app=iOS test application; project_info=Courgette-JVM is awesome!",
         plugin = {CourgettePlugin.MOBILE_DEVICE_ALLOCATOR},
+        mobileDeviceType = MobileDeviceType.SIMULATOR,
         mobileDevice = {
-                "iPhone 8",
-                "iPhone 12 mini",
-                "iPhone 13"
+                "iPhone 15",
+                "iPhone 15 Plus",
+                "iPhone 15 Pro",
         },
         cucumberOptions = @CucumberOptions(
                 features = "src/test/resources/features",

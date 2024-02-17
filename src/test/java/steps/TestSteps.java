@@ -12,7 +12,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import java.util.Objects;
 import static java.lang.String.format;
 
 public class TestSteps {
-    private IOSDriver<WebElement> driver;
+    private IOSDriver driver;
     private AppiumDriverLocalService service;
     private Scenario currentScenario;
 
@@ -41,26 +41,26 @@ public class TestSteps {
 
     @Given("I launch the app")
     public void iLaunchApp() {
-        driver.launchApp();
+        driver.activateApp("io.appium.TestApp");
     }
 
     @When("I show the alert")
     public void iShowTheAlert() {
-        driver.findElementByName("show alert").click();
+        driver.findElement(By.name("show alert")).click();
     }
 
     @Then("I verify the alert shows {}")
     public void iVerifyTheAlertShows(String alert) {
-        String alertText = driver.findElementByXPath(format("//XCUIElementTypeStaticText[@value='%s']", alert)).getText();
+        String alertText = driver.findElement(By.xpath(format("//XCUIElementTypeStaticText[@value='%s']", alert))).getText();
         Assert.assertEquals(alert, alertText);
     }
 
     @And("I accept the alert")
     public void iAcceptTheAlert() {
-        driver.findElementByName(("OK")).click();
+        driver.findElement((By.name("OK"))).click();
     }
 
-    private IOSDriver<WebElement> createIOSDriver(final URL serverURL) {
+    private IOSDriver createIOSDriver(final URL serverURL) {
         File app = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("apps/TestApp.app.zip")).getFile());
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -69,12 +69,13 @@ public class TestSteps {
         capabilities.setCapability("udid", CourgetteMobileDeviceAllocator.UDID);
         capabilities.setCapability("wdaLocalPort", CourgetteMobileDeviceAllocator.PARALLEL_PORT);
         capabilities.setCapability("platformName", "iOS");
+        capabilities.setCapability("platformVersion", "17.0");
         capabilities.setCapability("automationName", "XCUITest");
         capabilities.setCapability("noReset", true);
 
         currentScenario.log(format("iOS Device: %s", capabilities.getCapability("deviceName")));
 
-        return new IOSDriver<>(serverURL, capabilities);
+        return new IOSDriver(serverURL, capabilities);
     }
 
     private AppiumDriverLocalService createAppiumDriverLocalService() {
